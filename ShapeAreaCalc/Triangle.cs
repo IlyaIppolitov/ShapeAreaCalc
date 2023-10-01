@@ -1,6 +1,36 @@
-﻿namespace ShapeAreaCalc;
+﻿using System.Net.Http.Headers;
 
-public class Triangle
+namespace ShapeAreaCalc;
+
+public class Triangle : Shape
 {
-    
+    private readonly double[] _triangleSides;
+
+    public Triangle(double a, double b, double c) : base(() =>
+    {
+        var p = (a + b + c) / 2;
+        return Double.Sqrt(p * (p - a) * (p - b) * (p - c));
+    })
+    {
+        if (a <= 0 || b <= 0 || c <= 0)
+            throw new ArgumentException("Введено отрицательное значение стороны!");
+
+        if ((a + b) < c || (b + c) < a || (c + a) < b)
+            throw new ArgumentException("Данные не могут соответствовать треугольнику!");
+        
+        _triangleSides = new []{a,b,c};
+    }
+
+    public bool IsRight()
+    {
+        const double possibleError = 1e-4;
+        
+        Array.Sort(_triangleSides);
+        
+        var a = _triangleSides.ElementAt(0);
+        var b = _triangleSides.ElementAt(1);
+        var c = _triangleSides.ElementAt(2);
+        
+        return (double.Abs(a * a + b * b - c * c) <= possibleError);
+    }
 }
