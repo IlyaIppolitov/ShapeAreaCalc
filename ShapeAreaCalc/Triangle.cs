@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using ShapeAreaCalc.@base;
 
 namespace ShapeAreaCalc;
 
@@ -9,14 +10,16 @@ public class Triangle : Shape
     public Triangle(double a, double b, double c) : base(() =>
     {
         var p = (a + b + c) / 2;
-        return Double.Sqrt(p * (p - a) * (p - b) * (p - c));
+        return double.Sqrt(p * (p - a) * (p - b) * (p - c));
     })
     {
-        if (a <= 0 || b <= 0 || c <= 0)
-            throw new ArgumentException("Введено отрицательное значение стороны!");
+        if (a <= 0 || b <= 0 || c <= 0 ||
+            a is double.NaN || b is double.NaN || c is double.NaN ||
+            double.IsInfinity(a) || double.IsInfinity(b) || double.IsInfinity(c))
+            throw new ArgumentOutOfRangeException();
 
         if ((a + b) < c || (b + c) < a || (c + a) < b)
-            throw new ArgumentException("Данные не могут соответствовать треугольнику!");
+            throw new ArgumentException("Некорректный размер сторон");
         
         _triangleSides = new []{a,b,c};
     }
